@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from './components/Header';
 import Note from './components/Note';
 import Footer from './components/Footer';
@@ -7,7 +7,16 @@ import CreateArea from './components/CreateArea';
 
 function App() {
     // Declare state variable for notes
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState(() => {
+      const storedNotes = localStorage.getItem("notes");
+      return storedNotes ? JSON.parse(storedNotes) : [];
+    });
+  
+
+    //Save Notes to LocalStorage whenever `notes` change
+    useEffect(() => {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }, [notes]);
 
     // Add new note to the list
     function addNote(newNote) {
@@ -20,7 +29,7 @@ function App() {
     // Delete note function
     function deleteNote(id) {
       setNotes(prevNotes => {
-        return prevNotes.filter((noteItem, index) => {
+        return prevNotes.filter((note, index) => {
           return index !== id;
         });
       });

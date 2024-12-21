@@ -15,8 +15,10 @@ const CreateArea = ({ onAdd }) =>{
   }
 
   function submitNote() {
-    onAdd(note);
-    setNote({ title: '', content: '' });
+    if (note.title || note.content) {
+      onAdd(note);
+      setNote({ title: "", content: "" });
+    }
   }
 
   return (
