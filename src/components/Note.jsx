@@ -1,5 +1,16 @@
+import {Editor, EditorState, convertFromRaw} from 'draft-js';
 import { FaTrash,FaArchive } from "react-icons/fa"; // Import the trash icon 
 const Note = ({ id, title, content,tags, onDelete, onArchive }) => {
+  let editorState;
+
+  try {
+    // Validate and convert content
+    editorState = EditorState.createWithContent(convertFromRaw(content));
+  } catch (error) {
+    // Handle invalid or missing content
+    console.error("Invalid RawDraftContentState:", error.message);
+    editorState = EditorState.createEmpty(); // Fallback to an empty editor state
+  }
   // Delete note when clicked
   const handleDeleteNote =() => {
     onDelete(id);
@@ -8,7 +19,10 @@ const Note = ({ id, title, content,tags, onDelete, onArchive }) => {
     return (
       <div className="bg-white shadow-md rounded-md p-4 border border-gray-200">
         <h2 className="text-lg font-semibold mb-2">{title}</h2>
-        <p className="text-gray-600 mb-4">{content}</p>
+       {/* Render Draft.js content */}
+       <div className="mb-4">
+        <Editor editorState={editorState} readOnly={true} />
+      </div>
         {/* Display Tags */}
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
