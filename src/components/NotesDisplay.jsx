@@ -1,7 +1,7 @@
 import React from "react";
 import Note from "./Note";
 
-export const NotesDisplay =({ notes, onDelete })=> {
+export const NotesDisplay =({ notes, onDelete, onArchive })=> {
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {notes.map((note) => (
@@ -12,6 +12,7 @@ export const NotesDisplay =({ notes, onDelete })=> {
           content={note.content}
           tags={note.tags}
           onDelete={onDelete}
+          onArchive={onArchive}
         />
       ))}
     </div>

@@ -9,6 +9,7 @@ import {Footer} from './components/Footer';
 import { db } from './firebase';
 import { AddNotePage } from './Pages';
 import {addDoc, collection} from 'firebase/firestore';
+import ArchivePage from './Pages/ArchivePage';
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
     if (!user) return;
 
     // Add note to Firestore
-    const noteWithUser = { ...newNote, uid: user.uid };
+    const noteWithUser = { ...newNote, uid: user.uid, isArchived: false };
     const docRef = await addDoc(collection(db, "notes"), noteWithUser);
 
     // Update local state
@@ -35,6 +36,7 @@ function App() {
               {/* Redirect to the login page if the user is not authenticated */}
               <Route path="/" element={user ? <NotesPage notes={notes} setNotes={setNotes} /> : <Navigate to="/login" />} />
               <Route path="/add" element={user ? <AddNotePage onAdd={onAdd} /> : <Navigate to="/login" />} />
+              <Route path="/archive" element={user ? <ArchivePage /> : <Navigate to="/login" />} />              
 
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />

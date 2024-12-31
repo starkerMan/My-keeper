@@ -10,6 +10,9 @@ export const  Header =() => {
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">My Keeper App</h1>
         <nav className="flex gap-4">
+          {user && <Link to="/archive" className="hover:underline content-center">
+            Archive
+          </Link>}
           {user && <Link to="/" className="hover:underline content-center">
             Notes
           </Link>}

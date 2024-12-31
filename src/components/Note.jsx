@@ -1,5 +1,5 @@
-import { FaTrash } from "react-icons/fa"; // Import the trash icon 
-const Note = ({ id, title, content,tags, onDelete }) => {
+import { FaTrash,FaArchive } from "react-icons/fa"; // Import the trash icon 
+const Note = ({ id, title, content,tags, onDelete, onArchive }) => {
   // Delete note when clicked
   const handleDeleteNote =() => {
     onDelete(id);
@@ -23,13 +23,21 @@ const Note = ({ id, title, content,tags, onDelete }) => {
           </div>
         )}
 
-      {/* Delete Button */}
-      <button
-        className="text-red-500 hover:text-red-600"
-        onClick={handleDeleteNote}
-      >
-        <FaTrash size={18} />
-      </button>
+           {/* Action Buttons */}
+        <div className="flex gap-4">
+          <button
+            className="text-blue-500 hover:text-blue-600"
+            onClick={() => onArchive(id)}
+          >
+            <FaArchive size={18} />
+          </button>
+          <button
+            className="text-red-500 hover:text-red-600"
+            onClick={() => handleDeleteNote(id)}
+          >
+            <FaTrash size={18} /> 
+          </button>
+      </div>
       </div>
     );
   }

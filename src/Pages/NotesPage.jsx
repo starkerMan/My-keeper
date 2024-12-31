@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import {NotesDisplay} from '../components/NotesDisplay.jsx';
 import { db } from "../firebase";
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, updateDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export const  NotesPage = ({notes, setNotes})=> {
   const { user } = useAuth(); // Get the current user's info
@@ -15,11 +15,14 @@ export const  NotesPage = ({notes, setNotes})=> {
   // Fetch notes for the logged-in user
   useEffect(() => {
     const fetchNotes = async () => {
+
+      try{
       if (!user) return;
 
       const notesQuery = query(
         collection(db, "notes"),
-        where("uid", "==", user.uid)
+        where("uid", "==", user.uid),
+
       );
 
       const querySnapshot = await getDocs(notesQuery);
@@ -28,6 +31,11 @@ export const  NotesPage = ({notes, setNotes})=> {
         ...doc.data(),
       }));
 
+      const nonArchivedNotes = fetchedNotes.filter(
+        (note) => note.isArchived !== true
+      );
+
+
       // Extract unique tags
       const tags = [
         ...new Set(
@@ -35,13 +43,17 @@ export const  NotesPage = ({notes, setNotes})=> {
         ),
       ];
 
-      setNotes(fetchedNotes);
+      setNotes(nonArchivedNotes);
       setFilteredNotes(fetchedNotes);
       setAvailableTags(tags);
+
+    }catch(err){
+      console.error('Error fetching notes:', err);
+    }
     };
 
     fetchNotes();
-  }, [user]);
+  }, [setNotes, user]);
 
   // Filter notes when searchQuery or selectedTags change
   useEffect(() => {
@@ -67,19 +79,17 @@ export const  NotesPage = ({notes, setNotes})=> {
     setFilteredNotes(filtered);
   }, [searchQuery, selectedTags, notes]);
 
-  // Add a new note for the logged-in user
-  const addNote = async (newNote) => {
-    if (!user) return; // Ensure user is authenticated
-
-    const noteWithUser = { ...newNote, uid: user.uid };
-    const docRef = await addDoc(collection(db, "notes"), noteWithUser);
-
-    setNotes((prevNotes) => [...prevNotes, { id: docRef.id, ...noteWithUser }]);
-  };
 
   // Delete a note
   const deleteNote = async (id) => {
     await deleteDoc(doc(db, "notes", id));
+    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  };
+
+  //Archive a note
+  const archiveNote = async (id) => {
+    const noteRef = doc(db, "notes", id);
+    await updateDoc(noteRef, { isArchived: true });
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
   };
 
@@ -123,7 +133,7 @@ export const  NotesPage = ({notes, setNotes})=> {
       </div>
 
       {/* Display Notes */}
-      <NotesDisplay notes={filteredNotes} onDelete={deleteNote} />
+      <NotesDisplay notes={filteredNotes} onDelete={deleteNote} onArchive={archiveNote} />
     </div>
   );
 }
