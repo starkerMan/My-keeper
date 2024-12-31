@@ -1,60 +1,47 @@
-// src/App.jsx
-import React, {useEffect, useState} from 'react';
-import Header from './components/Header';
-import Note from './components/Note';
-import Footer from './components/Footer';
-import CreateArea from './components/CreateArea';
+import {useState} from 'react';
+import {useAuth} from './context/AuthContext';
+import { Route, Routes,Navigate } from 'react-router-dom';
+import {NotesPage} from './Pages/NotesPage';
+import {Signup} from './Signup/Signup';
+import {Login} from './Login/Login';
+import {Header} from './components/Header';
+import {Footer} from './components/Footer';
+import { db } from './firebase';
+import { AddNotePage } from './Pages';
+import {addDoc, collection} from 'firebase/firestore';
+
 
 function App() {
-    // Declare state variable for notes
-    const [notes, setNotes] = useState(() => {
-      const storedNotes = localStorage.getItem("notes");
-      return storedNotes ? JSON.parse(storedNotes) : [];
-    });
-  
+  const { user } = useAuth();
+  const [notes, setNotes] = useState([]); // Shared state for notes
 
-    //Save Notes to LocalStorage whenever `notes` change
-    useEffect(() => {
-      localStorage.setItem('notes', JSON.stringify(notes));
-    }, [notes]);
+  const onAdd = async (newNote) => {
+    if (!user) return;
 
-    // Add new note to the list
-    function addNote(newNote) {
-      setNotes(prevNotes => {
-        return [...prevNotes, newNote];
-      });
-      
-    }
-  
-    // Delete note function
-    function deleteNote(id) {
-      setNotes(prevNotes => {
-        return prevNotes.filter((note, index) => {
-          return index !== id;
-        });
-      });
-    }
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <CreateArea onAdd={addNote} />
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {notes.map((noteItem, index) => {
-          return (
-             <Note
-            key={index}
-            id={index}
-            title={noteItem.title}
-            content={noteItem.content}
-            onDelete={deleteNote}
-          />
-        );
-      })}
-        </div>
-      </main>
-      <Footer />
-    </div>
+    // Add note to Firestore
+    const noteWithUser = { ...newNote, uid: user.uid };
+    const docRef = await addDoc(collection(db, "notes"), noteWithUser);
+
+    // Update local state
+    setNotes((prevNotes) => [...prevNotes, { id: docRef.id, ...noteWithUser }]);
+  };
+
+
+  return  (
+      <div className="flex flex-col min-h-screen bg-gray-100">
+          <Header />
+          <main  className='flex-grow container mx-auto px-4 py-8'>
+            <Routes>
+              {/* Redirect to the login page if the user is not authenticated */}
+              <Route path="/" element={user ? <NotesPage notes={notes} setNotes={setNotes} /> : <Navigate to="/login" />} />
+              <Route path="/add" element={user ? <AddNotePage onAdd={onAdd} /> : <Navigate to="/login" />} />
+
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+            </main>
+            <Footer/>
+      </div>
   );
 }
 
