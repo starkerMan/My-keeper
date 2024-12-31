@@ -110,15 +110,23 @@ It allows users to create, manage, and archive notes, leveraging modern technolo
 
 ### **Home Page**
 
-![Home Page](https://via.placeholder.com/800x400.png?text=Add+Screenshot+Here)
+<img width="790" alt="Screenshot 2024-12-31 at 11 23 10 AM" src="https://github.com/user-attachments/assets/ca4d5fac-e9f4-4554-b297-7788f639a0bd" />
+
+### **Search And Filters using fuzzy search**
+
+<img width="791" alt="Screenshot 2024-12-31 at 11 25 32 AM" src="https://github.com/user-attachments/assets/1a88c7be-989b-4c1c-8eea-202d93213895" />
+
 
 ### **Rich Text Editor**
+<img width="779" alt="Screenshot 2024-12-31 at 11 08 36 AM" src="https://github.com/user-attachments/assets/7aaea8ed-564b-4440-8220-84daff401114" />
 
-![Rich Text Editor](https://via.placeholder.com/800x400.png?text=Add+Screenshot+Here)
 
-### **Search and Filter**
 
-![Search and Filter](https://via.placeholder.com/800x400.png?text=Add+Screenshot+Here)
+### **Login and Signup using Firebase**
+
+<img width="791" alt="Screenshot 2024-12-31 at 11 23 28 AM" src="https://github.com/user-attachments/assets/c3a440a4-070b-4c3f-9433-7f903d6bf5a7" />
+
+
 
 ## 💼 Why This Project?
 
